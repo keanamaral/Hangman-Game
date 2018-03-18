@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Kean's Hangman Game</title>
+<style>
+#refpgbutton{
+  height: 100px;
+  width: 150px;
+  position: fixed;
+  left: 400px;
+  top: 90px;
+  font-size: 16px;
+}
+#NewWordUnderScores{
+  margin-left: 50px;
+}
+</style>
+</head>
+
+<body>
+  <h1>Welcome to Kean's Hangman Game!</h1>
+  <h2>Guess what word I am thinking of</h2>
+  <h1 id="NewWordUnderScores"></h1><br>
+  <div id="game">
+    <p>Press a letter on your key board to start playing!</p>
+  </div>
+
+  <input id="refpgbutton" type="button" value="Restart Game" onClick="window.location.reload()">
+
+  <script type="text/javascript">
+
+    //Array of words
+    var computerChoices = ["abdomen", "bully", "cartooning", "dwarf", "echo", "frustrated", "grapes", 
+    "holiday", "infant", "jumping", "kinectic", "lemonade", "mongoose", "nigeria", "orangutan", "prince", 
+    "queen", "romeo", "saliva", "twisted", "umbrella", "vector", "warmth", "xray", "yellow", "zeroed"];
+    
+    var userLetters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o",
+    "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+
+    var ltrsLeftAr = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o",
+    "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+
+    // Creating & initiating other needed variables
+    var wins = 0;
+    var winCounter = 0;
+    var losses = 0;
+    var guessesLeft = 10;
+    var underScores = [];  //array fpr underscores related to computer word selected
+    var ltrsCorrectAr = [];  //array to store correct user guesses
+    var ltrsWrongAr = [];  //array to store wrong letters of user guesses
+    var computerGuess;
+
+    function startGame(){
+      // Randomly chooses a word from computerChoices array & puts into computerGuess
+      console.log("Start Game Executed")
+      var computerGuess = computerChoices[Math.floor(Math.random() * computerChoices.length)];
+      console.log("Computer Guess: " + computerGuess);
+      for(var i = 0; i < computerGuess.length; i++){
+        //console.log(i);
+        underScores.push("_");  //push underscores into array underScores to match word length computer selected
+      }console.log("Underscores: " + underScores);
+      document.getElementById("NewWordUnderScores").textContent = underScores.join(" ");  //puts underscores on the page
+
+      console.log("ltrsLeftAr: " + ltrsLeftAr);
+      console.log("userLetters: " + userLetters);
+    
+    // This function is run whenever the user presses a key.
+    document.onkeyup = function(event) {                  ///*To access Value of variable computerGuess, I put this function inside function StartGame()
+      // Determines which key was pressed and put into userGuess
+      console.log("Start of Document Function")
+      var userGuess = String.fromCharCode(event.which).toLowerCase();
+      console.log("User Key stroke: " + userGuess); console.log("Computer Guess: " + computerGuess); console.log("Index of Selection in userLetters: " +userLetters.indexOf(userGuess));
+      //
+      //ALL IF STATEMENT CHECKS below
+      //
+      //if letter from a-z is not pressed alert user
+      if (ltrsLeftAr.indexOf(userGuess)===-1){             //if user does not type a letter from a-z
+        alert("Please enter letter from a-z only");
+      }
+      else if (ltrsCorrectAr.indexOf(userGuess) > -1){        //if correct letter is already chosen, you cannot use it again
+        alert("Already guessed correctly! Choose another letter from Letters remaining!!!")
+      }
+      else if ((computerGuess.indexOf(userGuess) > -1)&&(winCounter < computerGuess.length-1)){      //if user guesses a correct letter and its not the last correct letter
+        console.log("Guesses a correct letter IF")
+        console.log("User Key stroke: " + userGuess); console.log("Computer Guess: " + computerGuess); console.log("Index of User Key Stroke in Computer Guess: " + computerGuess.indexOf(userGuess));
+        ltrsCorrectAr.push(userGuess);                        //adding correct guess into its array
+        console.log("Correct Letters: " + ltrsCorrectAr);
+        ltrsLeftAr.splice(ltrsLeftAr.indexOf(userGuess),1);     //removing correct guess from remaining letters available array
+        console.log("userLetters: " + userLetters);
+        console.log("ltrsLeftAr: " + ltrsLeftAr);
+        for(var i = 0; i < computerGuess.length; i++){                             //need to loop through each element in computerGuess array incase letter pressed is repeated in computer guess
+            if(computerGuess[i] === userGuess){
+                  underScores[i] = userGuess;                                      //replacing underscore with correct guess in array of underscores
+                  winCounter++;                                                    //increment winCounter
+                  console.log("winCounter1: " + winCounter); console.log("Computer Guess Length1: " + computerGuess.length);
+                  }
+                  document.getElementById("NewWordUnderScores").textContent = underScores.join(" ");  //printing on page underscore with correct guess
+        }
+      }
+      else if ((computerGuess.indexOf(userGuess) > -1)&&(winCounter < computerGuess.length)){      //if user guesses a FINAL correct letter
+        console.log("Final Correct Letter IF")
+        ltrsCorrectAr.push(userGuess);                        //adding correct guess into its array
+        ltrsLeftAr.splice(ltrsLeftAr.indexOf(userGuess),1);     //removing correct guess from remaining letters available array
+        for(var i = 0; i < computerGuess.length; i++){                             //need to loop through each element in computerGuess array incase letter pressed is repeated in computer guess
+            if(computerGuess[i] === userGuess){
+                  underScores[i] = userGuess;                                      //replacing underscore with correct guess in array of underscores
+                  winCounter++;                                                    //increment winCounter
+                  console.log("winCounter2: " + winCounter); console.log("Computer Guess Length2: " + computerGuess.length);
+                  }
+                  document.getElementById("NewWordUnderScores").textContent = underScores.join(" ");  //printing on page underscore with correct guess
+        }
+        wins++;                                             //increment wins
+        alert("!!! ** CONGRATULATIONS ** !!!");
+        ltrsLeftAr = userLetters;
+        ltrsWrongAr = [];
+        ltrsCorrectAr = [];
+      }
+      else if(winCounter === computerGuess.length){            // to allow user to start new game after guessing ALL CORRECT
+        guessesLeft = 10;                                      // initiating variable
+        winCounter = 0;                                        // initiating variable
+        ltrsLeftAr = userLetters;                              // initiating array
+        ltrsWrongAr = [];
+        ltrsCorrectAr = [];
+
+        for(var i = 0; i < computerGuess.length; i++){         // 
+            underScores.pop();                                 //clearing out old word
+        }
+        computerGuess = [];
+        userGuess = [];
+
+        document.getElementById("NewWordUnderScores").textContent = underScores;  //refreshes underscores
+        startGame();                                                ////Starting New Game - New Word and keeping old scores
+      }
+      ////
+      ////BELOW ARE THE WRONG LETTER IF STATEMENTS///
+      ////
+      else if (ltrsWrongAr.indexOf(userGuess) > -1){        //if wrong letter is already chosen, you cannot use it again
+        alert("Already wrong guess! Choose another letter from Letters remaining!!!")
+      }
+      else if ((computerGuess.indexOf(userGuess) === -1)&&(guessesLeft > 0)){    //if user guesses a wrong letter
+        console.log("Wrong Letters IF Loop 1");
+        ltrsWrongAr.push(userGuess);                        //push into Wrong Letters into its array
+        console.log("Wrong Letters: " + ltrsWrongAr);
+        ltrsLeftAr.splice(ltrsLeftAr.indexOf(userGuess),1); //removing wrong guess also from remaining letters available array
+        console.log("userLetters: " + userLetters);
+        console.log("ltrsLeftAr: " + ltrsLeftAr);
+        guessesLeft--;                                      //decrease count of guesses left
+      }
+      else if ((computerGuess.indexOf(userGuess) === -1)&&(guessesLeft === 0)){    //if user guesses FINAL wrong letter
+        console.log("Wrong Letters IF Loop 2");
+        losses++;                                           //increment losses
+        alert("!!!  YOU LOST!!!  BETTER LUCK NEXT TIME!!!  TRY AGAIN!!!");
+
+        guessesLeft = 10;                                      // initiating variable
+        winCounter = 0;                                        // initiating variable
+        ltrsLeftAr = userLetters;
+        ltrsWrongAr = [];
+        ltrsCorrectAr = [];
+
+        for(var i = 0; i < computerGuess.length; i++){         // 
+            underScores.pop();                                 //clearing out old word
+        }
+        computerGuess = [];
+        userGuess = [];
+        document.getElementById("NewWordUnderScores").textContent = underScores;  //refreshes underscores
+        startGame();                                                ////Starting New Game - New Word and keeping old scores
+      }
+          var html =
+          "<p>Guesses left: " + guessesLeft + "</p>" +
+          "<p>Incorrect letters guessed so far: " + ltrsWrongAr + "</p>" +
+          "<p>Letters remaining to choose from: " + ltrsLeftAr + "</p>" +
+          "<p>Wins: " + wins + "</p>" +
+          "<p>Losses: " + losses + "</p>"
+        // Set the inner HTML contents of the #game div to our html string
+        document.querySelector("#game").innerHTML = html;
+      };
+    };
+
+      //***Main Game Hangman
+      startGame();      //initiate New Game Complete Refresh
+
+  </script>
+
+</body>
+
+</html>
